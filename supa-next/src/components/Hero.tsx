@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export function Hero() {
   return (
@@ -28,12 +29,14 @@ export function Hero() {
         </div>
 
         {/* CTA Button */}
-        <Button
-          size="lg"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6 text-lg rounded-lg"
-        >
-          تقديم طلب الانضمام
-        </Button>
+        <Link href="/join">
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6 text-lg rounded-lg"
+          >
+            تقديم طلب الانضمام
+          </Button>
+        </Link>
       </div>
     </section>
   )

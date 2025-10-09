@@ -1,7 +1,13 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export function Header() {
+  const pathname = usePathname()
+  const isJoinPage = pathname !== "/join"
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -11,17 +17,16 @@ export function Header() {
             <img src="/logo.svg" alt="Logo" width={100} height={100} />
           </div>
         </div>
-        
-        
-        {/* Left side - Join button */}
-        <Button
-          variant="default"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 rounded-md"
-        >
-          طلب الانضمام
-        </Button>
-      </div>
 
+        {/* Left side - Join button */}
+        {isJoinPage && (
+          <Link href="/join">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 rounded-md">
+              طلب الانضمام
+            </Button>
+          </Link>
+        )}
+      </div>
     </header>
   )
 }
