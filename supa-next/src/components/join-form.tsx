@@ -6,12 +6,57 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { TagInput } from "@/components/ui/tag-input"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { submitJoinForm } from "@/app/actions/submit-form"
 
 export function JoinForm() {
-  const [skills, setSkills] = useState("")
+  const router = useRouter()
+  const [username, setUsername] = useState("")
+  const [fullname, setFullname] = useState("")
+  const [email, setEmail] = useState("")
+  const [team, setTeam] = useState("")
+  const [skills, setSkills] = useState<string[]>([])
   const [about, setAbout] = useState("")
+  const [timeAvailability, setTimeAvailability] = useState("more-5")
   const [notes, setNotes] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Basic validation
+    if (!username || !fullname || !email || !team || skills.length === 0 || !about) {
+      alert("يرجى ملء جميع الحقول الإلزامية")
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const result = await submitJoinForm({
+        username,
+        fullname,
+        email,
+        team,
+        skills,
+        about,
+        timeAvailability,
+        notes,
+      })
+
+      if (result.success) {
+        router.push('/succ-join')
+      } else {
+        alert(result.message)
+      }
+    } catch (error) {
+      alert("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12">
@@ -30,7 +75,7 @@ export function JoinForm() {
         <p className="text-destructive text-sm">* حقائب إلزامية</p>
       </div>
 
-      <form className="space-y-16">
+      <form onSubmit={handleSubmit} className="space-y-16">
         {/* Personal Information Section */}
         <div className="relative">
           <div className="flex items-center gap-4 mb-10">
@@ -50,21 +95,43 @@ export function JoinForm() {
               <Label htmlFor="username" className="text-right block mb-2 text-sm">
                 اسم المستخدم (الاسم/رمزي)
               </Label>
-              <Input id="username" className="text-right bg-background" placeholder="الإيمايل" />
+              <Input 
+                id="username" 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="text-right bg-background" 
+                placeholder="الإيمايل"
+                required
+              />
             </div>
 
             <div>
               <Label htmlFor="fullname" className="text-right block mb-2 text-sm">
                 الاسم الكامل
               </Label>
-              <Input id="fullname" className="text-right bg-background" placeholder="الفاعل المجتمع" />
+              <Input 
+                id="fullname" 
+                value={fullname}
+                onChange={(e) => setFullname(e.target.value)}
+                className="text-right bg-background" 
+                placeholder="الفاعل المجتمع"
+                required
+              />
             </div>
 
             <div>
               <Label htmlFor="email" className="text-right block mb-2 text-sm">
                 البريد الإلكتروني
               </Label>
-              <Input id="email" type="email" className="text-right bg-background" placeholder="[email protected]" />
+              <Input 
+                id="email" 
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="text-right bg-background" 
+                placeholder="[email protected]"
+                required
+              />
             </div>
           </div>
         </div>
@@ -86,15 +153,20 @@ export function JoinForm() {
           </div>
 
           <div className="bg-card/30 p-8 rounded-lg">
-            <Select>
-              <SelectTrigger className="w-full text-right bg-background">
+            <Select value={team} onValueChange={setTeam} required>
+              <SelectTrigger className="w-full text-right bg-background h-12">
                 <SelectValue placeholder="اختر الفريق" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="media">فريق الإعلام</SelectItem>
-                <SelectItem value="tech">فريق التقنية</SelectItem>
-                <SelectItem value="events">فريق الفعاليات</SelectItem>
-                <SelectItem value="content">فريق المحتوى</SelectItem>
+                <SelectItem value="design" className="text-right cursor-pointer">
+                  🎨 فريق التصميم
+                </SelectItem>
+                <SelectItem value="evenings" className="text-right cursor-pointer">
+                  🌙 فريق الأمسيات
+                </SelectItem>
+                <SelectItem value="activities" className="text-right cursor-pointer">
+                  📅 فريق الأنشطة والفعاليات
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -118,16 +190,15 @@ export function JoinForm() {
 
           <div className="bg-card/30 p-8 rounded-lg">
             <div className="relative">
-              <Input
-                value={skills}
-                onChange={(e) => setSkills(e.target.value.slice(0, 100))}
-                className="text-right bg-background"
-                placeholder="مهاراتي، أدواتي..."
-                maxLength={100}
+              <TagInput
+                tags={skills}
+                onTagsChange={setSkills}
+                placeholder="أضف مهارة أو أداة..."
+                maxTags={10}
+                maxLength={30}
               />
-              <div className="text-xs text-muted-foreground text-left mt-2">{skills.length}/100</div>
               <p className="text-xs text-muted-foreground text-right mt-3">
-                اكتب مهاراتك بشكل واضح، مثلاً: برمجة بايثون، تصميم جرافيك ()
+                اكتب مهاراتك بشكل واضح، مثلاً: برمجة بايثون، تصميم جرافيك، مونتاج فيديو
               </p>
             </div>
           </div>
@@ -182,20 +253,20 @@ export function JoinForm() {
           </div>
 
           <div className="bg-card/30 p-8 rounded-lg">
-            <RadioGroup defaultValue="3-5" className="space-y-4">
-              <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors">
+            <RadioGroup value={timeAvailability} onValueChange={setTimeAvailability} className="space-y-4">
+              <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer">
                 <Label htmlFor="less-3" className="cursor-pointer text-sm">
                   أقل من 3 ساعات
                 </Label>
                 <RadioGroupItem value="less-3" id="less-3" />
               </div>
-              <div className="flex items-center justify-end gap-3 p-3 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors">
-                <Label htmlFor="3-5" className="cursor-pointer text-sm font-medium">
+              <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer">
+                <Label htmlFor="3-5" className="cursor-pointer text-sm">
                   من 3 إلى 5 ساعات
                 </Label>
                 <RadioGroupItem value="3-5" id="3-5" />
               </div>
-              <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors">
+              <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer">
                 <Label htmlFor="more-5" className="cursor-pointer text-sm">
                   أكثر من 5 ساعات
                 </Label>
@@ -248,9 +319,10 @@ export function JoinForm() {
           <Button
             type="submit"
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-16 py-6 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all"
+            disabled={isSubmitting}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-16 py-6 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            إرسال
+            {isSubmitting ? "جاري الإرسال..." : "إرسال"}
           </Button>
         </div>
       </form>
