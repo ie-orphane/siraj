@@ -10,6 +10,7 @@ import { TagInput } from "@/components/ui/tag-input"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { submitJoinForm } from "@/app/actions/submit-form"
+import { toast } from "sonner"
 
 export function JoinForm() {
   const router = useRouter()
@@ -28,7 +29,7 @@ export function JoinForm() {
     
     // Basic validation
     if (!username || !fullname || !email || !team || skills.length === 0 || !about) {
-      alert("يرجى ملء جميع الحقول الإلزامية")
+      toast.error("يرجى ملء جميع الحقول الإلزامية")
       return
     }
 
@@ -47,12 +48,13 @@ export function JoinForm() {
       })
 
       if (result.success) {
+        toast.success("تم إرسال طلبك بنجاح!")
         router.push('/succ-join')
       } else {
-        alert(result.message)
+        toast.error(result.message)
       }
-    } catch (error) {
-      alert("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.")
+    } catch {
+      toast.error("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.")
     } finally {
       setIsSubmitting(false)
     }

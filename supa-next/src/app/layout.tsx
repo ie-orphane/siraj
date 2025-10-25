@@ -6,6 +6,8 @@ import { Amiri } from "next/font/google"
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css"
 import { Suspense } from "react"
+import { JoinAuthHandler } from "@/components/join-auth-handler"
+import { ToastProvider } from "@/components/providers/toast-provider"
 
 const amiri = Amiri({
   weight: ["400", "700"],
@@ -29,6 +31,8 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${amiri.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+        <JoinAuthHandler />
+        <ToastProvider />
         <Analytics />
       </body>
     </html>

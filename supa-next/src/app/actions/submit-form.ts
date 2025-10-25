@@ -1,6 +1,8 @@
 'use server'
 
 import nodemailer from 'nodemailer'
+import { createClient } from '@/lib/supabase/server'
+import { getSession } from '@/lib/session'
 
 export interface JoinFormData {
   username: string
@@ -35,6 +37,43 @@ function getTimeAvailability(value: string): string {
 
 export async function submitJoinForm(formData: JoinFormData) {
   try {
+    // Get the current user session
+    const session = await getSession()
+    
+    if (!session?.user?.id) {
+      throw new Error('User not authenticated')
+    }
+
+    // First, store the form data in the database
+    const supabase = await createClient()
+    
+    const { data: submission, error: dbError } = await supabase
+      .from('form_submissions')
+      .insert({
+        user_id: session.user.id,
+        username: formData.username,
+        fullname: formData.fullname,
+        email: formData.email,
+        team: formData.team,
+        skills: formData.skills,
+        about: formData.about,
+        time_availability: formData.timeAvailability,
+        notes: formData.notes || null,
+        email_sent: false,
+        form_completed: true,
+        form_completed_at: new Date().toISOString()
+      })
+      .select()
+      .single()
+
+    if (dbError) {
+      console.error('Database error:', dbError)
+      throw new Error('Failed to store form submission in database')
+    }
+
+    console.log('Form submission stored in database with ID:', submission.id)
+
+    // Now proceed with email sending
     const adminEmail = process.env.ADMIN_EMAIL
     const smtpHost = process.env.SMTP_HOST
     const smtpPort = process.env.SMTP_PORT
@@ -197,10 +236,24 @@ ${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : 'لا ت�
           html: emailHTML,
         })
 
-        console.log('Email sent successfully!')
+        // Update database to mark email as sent
+        const { error: updateError } = await supabase
+          .from('form_submissions')
+          .update({
+            email_sent: true,
+            email_sent_at: new Date().toISOString()
+          })
+          .eq('id', submission.id)
+
+        if (updateError) {
+          console.error('Failed to update email status:', updateError)
+        } else {
+          console.log('Email sent successfully and status updated in database!')
+        }
       } catch (emailError) {
         console.error('Email sending failed:', emailError)
         // Continue anyway - don't fail the submission if email fails
+        // The database record will remain with email_sent: false
       }
     } else {
       console.log('SMTP not configured. Email logged to console only.')

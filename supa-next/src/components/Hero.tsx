@@ -33,6 +33,7 @@ export function Hero() {
           <Button
             size="lg"
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6 text-lg rounded-lg"
+            data-join-btn
           >
             تقديم طلب الانضمام
           </Button>

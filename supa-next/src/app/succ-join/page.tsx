@@ -3,8 +3,21 @@ import { BackgroundPattern } from "@/components/background-pattern"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Header } from "@/components/Header"
+import { checkFormCompletionStatus } from "@/lib/form-status"
+import { redirect } from "next/navigation"
 
-export default function SuccJoin() {
+export default async function SuccJoin() {
+  const formStatus = await checkFormCompletionStatus()
+
+  // If user is not logged in, redirect to login
+  if (!formStatus.isLoggedIn) {
+    redirect('/login')
+  }
+
+  // If user hasn't submitted the form yet, redirect to join page
+  if (!formStatus.hasSubmittedForm) {
+    redirect('/join')
+  }
   return (
     <div className="min-h-screen bg-background relative flex flex-col">
       <BackgroundPattern />

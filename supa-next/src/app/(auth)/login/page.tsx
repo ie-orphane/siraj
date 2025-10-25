@@ -1,49 +1,47 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
 import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const supabase = createClient()
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const signInWithMagicLink = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithOtp({ email })
-    setLoading(false)
-    if (error) alert(error.message)
-    else alert('Check your email for the magic link!')
-  }
-
-  const signInWithGitHub = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'github' })
-    if (error) alert(error.message)
+  const handle42Login = async () => {
+    setIsLoading(true)
+    try {
+      const authUrl = '/api/auth/42'
+      window.location.href = authUrl
+    } catch (error) {
+      console.error('Login error:', error)
+      toast.error('حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.')
+      setIsLoading(false)
+    }
   }
 
   return (
-    <main className="mx-auto max-w-md p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Sign in</h1>
+    <main className="min-h-screen flex items-center justify-center bg-background">
+      <div className="mx-auto max-w-md p-6 space-y-6 w-full">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-2">مرحباً بك في نادي سراج</h1>
+          <p className="text-muted-foreground mb-8">
+            سجل دخولك باستخدام حساب 42 للانضمام إلى النادي
+          </p>
+        </div>
 
-      <form onSubmit={signInWithMagicLink} className="space-y-3">
-        <input
-          className="w-full border rounded-xl p-3"
-          placeholder="you@example.com"
-          type="email"
-          value={email}
-          onChange={e=>setEmail(e.target.value)}
-        />
-        <button className="w-full rounded-xl p-3 border" disabled={loading}>
-          {loading ? 'Sending…' : 'Send magic link'}
-        </button>
-      </form>
+        <Button
+          onClick={handle42Login}
+          disabled={isLoading}
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6 text-lg rounded-lg"
+          aria-busy={isLoading}
+        >
+          {isLoading ? 'جاري التحميل...' : 'تسجيل الدخول بحساب 42'}
+        </Button>
 
-      <div className="text-center text-sm opacity-70">or</div>
-
-      <button onClick={signInWithGitHub} className="w-full rounded-xl p-3 border">
-        Continue with GitHub
-      </button>
+        <div className="text-center text-sm text-muted-foreground">
+          <p>سيتم توجيهك إلى صفحة تسجيل الدخول في 42</p>
+        </div>
+      </div>
     </main>
   )
 }
