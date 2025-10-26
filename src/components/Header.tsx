@@ -1,13 +1,13 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Logo } from "./logo";
+import LoginButton from "./login-button";
+import Image from "next/image";
+import { getSession } from "@/lib/session";
+import { checkFormCompletionStatus } from "@/lib/form-status";
 
-export function Header() {
-  const pathname = usePathname();
-  const isJoinPage = pathname === "/";
+export async function Header() {
+  const formStatus = await checkFormCompletionStatus();
+  const session = await getSession();
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
@@ -33,15 +33,24 @@ export function Header() {
           </Link>
         </nav>
 
-        {isJoinPage && (
-          <div className="flex justify-end gap-4">
-            <Link href="/join">
-              <Button className="bg-secondary-container hover:bg-secondary-container/90 text-secondary-on-container font-semibold px-6 rounded-md">
-                تسجيل الدخول
-              </Button>
+        <div className="flex justify-end">
+          {!formStatus.isLoggedIn ? (
+            <LoginButton varient="secondary" size="sm" />
+          ) : (
+            <Link
+              href={`https://profile.intra.42.fr/users/${session?.user.login}`}
+              target="_blank"
+            >
+              <Image
+                src={session?.user.image || ""}
+                alt="User Avatar"
+                width={40}
+                height={40}
+                className="rounded-full border-2 border-[#0E0E0E]"
+              />
             </Link>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </header>
   );

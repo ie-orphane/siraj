@@ -1,64 +1,71 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { TagInput } from "@/components/ui/tag-input"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { submitJoinForm } from "@/app/actions/submit-form"
-import { toast } from "sonner"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { TagInput } from "@/components/ui/tag-input";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { submitJoinForm } from "@/app/actions/submit-form";
+import { toast } from "sonner";
 
 interface UserData {
-  id: string
-  name: string
-  email: string
-  image?: string
+  id: string;
+  name: string;
+  email: string;
+  login: string;
+  image?: string;
 }
 
 interface JoinFormProps {
-  userData?: UserData
+  userData?: UserData;
 }
 
 export function JoinForm({ userData }: JoinFormProps) {
-  const router = useRouter()
-  const [username, setUsername] = useState("")
-  const [fullname, setFullname] = useState("")
-  const [email, setEmail] = useState("")
-  const [tel, setTel] = useState("")
-  const [team, setTeam] = useState("")
-  const [skills, setSkills] = useState<string[]>([])
-  const [about, setAbout] = useState("")
-  const [timeAvailability, setTimeAvailability] = useState("more-5")
-  const [notes, setNotes] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [email, setEmail] = useState("");
+  const [tel, setTel] = useState("");
+  const [team, setTeam] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
+  const [about, setAbout] = useState("");
+  const [timeAvailability, setTimeAvailability] = useState("");
+  const [notes, setNotes] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Pre-fill form fields with user data (except email)
   useEffect(() => {
-    if (userData) {
-      setFullname(userData.name || "")
-      // Extract username from email (part before @)
-      if (userData.email) {
-        const usernameFromEmail = userData.email.split('@')[0]
-        setUsername(usernameFromEmail)
-      }
-      // Note: Email field is NOT auto-filled - user must enter it manually
-    }
-  }, [userData])
+    if (!userData) return;
+    setUsername(userData.login ?? "");
+    setFullname(userData.name ?? "");
+  }, [userData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     // Basic validation
-    if (!username || !fullname || !email || !team || skills.length === 0 || !about) {
-      toast.error("يرجى ملء جميع الحقول الإلزامية")
-      return
+    if (
+      !username ||
+      !fullname ||
+      !email ||
+      !team ||
+      skills.length === 0 ||
+      !about
+    ) {
+      toast.error("يرجى ملء جميع الحقول الإلزامية");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       const result = await submitJoinForm({
@@ -71,20 +78,20 @@ export function JoinForm({ userData }: JoinFormProps) {
         about,
         timeAvailability,
         notes,
-      })
+      });
 
       if (result.success) {
-        toast.success("تم إرسال طلبك بنجاح!")
-        router.push('/succ-join')
+        toast.success("تم إرسال طلبك بنجاح!");
+        router.push("/succ-join");
       } else {
-        toast.error(result.message)
+        toast.error(result.message);
       }
     } catch {
-      toast.error("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.")
+      toast.error("حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-20">
@@ -122,35 +129,37 @@ export function JoinForm({ userData }: JoinFormProps) {
 
           <div className="space-y-6 bg-card/30 p-8 rounded-lg">
             <div>
-              <Label htmlFor="username" className="text-right block mb-2 text-sm">
-                اسم المستخدم (المدرسي):
-                {userData?.email && (
-                  <span className="text-green-600 text-xs mr-2">(تم التعبئة تلقائياً)</span>
-                )}
+              <Label
+                htmlFor="username"
+                className="text-right block mb-2 text-sm"
+              >
+                اسم المدرسي:
               </Label>
-              <Input 
-                id="username" 
+              <Input
+                id="username"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="text-right bg-background py-5" 
+                onChange={() => {}}
+                className="text-right bg-background py-5"
                 placeholder="aalaoui"
+                disabled
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="fullname" className="text-right block mb-2 text-sm">
-                الاسم الكامل
-                {userData?.name && (
-                  <span className="text-green-600 text-xs mr-2">(تم التعبئة تلقائياً)</span>
-                )}
+              <Label
+                htmlFor="fullname"
+                className="text-right block mb-2 text-sm"
+              >
+                الاسم الكامل:
               </Label>
-              <Input 
-                id="fullname" 
+              <Input
+                id="fullname"
                 value={fullname}
-                onChange={(e) => setFullname(e.target.value)}
-                className="text-right bg-background py-5" 
+                onChange={() => {}}
+                className="text-right bg-background py-5"
                 placeholder="أحمد العلوي"
+                disabled
                 required
               />
             </div>
@@ -175,14 +184,14 @@ export function JoinForm({ userData }: JoinFormProps) {
 
             <div>
               <Label htmlFor="email" className="text-right block mb-2 text-sm">
-                البريد الإلكتروني
+                البريد الإلكتروني:
               </Label>
-              <Input 
-                id="email" 
+              <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="text-right bg-background py-5" 
+                className="text-right bg-background py-5"
                 placeholder="ahmed@alaoui.ma"
                 required
               />
@@ -308,7 +317,10 @@ export function JoinForm({ userData }: JoinFormProps) {
           </div>
 
           <div className="bg-card/30 p-8 rounded-lg">
-            <RadioGroup value={timeAvailability} onValueChange={setTimeAvailability}>
+            <RadioGroup
+              value={timeAvailability}
+              onValueChange={setTimeAvailability}
+            >
               <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer">
                 <Label htmlFor="less-3" className="cursor-pointer text-sm">
                   أقل من 3 ساعات
@@ -366,16 +378,15 @@ export function JoinForm({ userData }: JoinFormProps) {
 
         <div>
           {/* Privacy Notice */}
-            <p className="text-sm text-center text-muted-foreground leading-relaxed mb-6">
-              جميع المعلومات التي تقدمها سرية، وتُستخدم فقط لأغراض تقييم الانضمام
-              للنادي، ولن تتم مشاركتها مع أي طرف ثالث.
-            </p>
+          <p className="text-sm text-center text-muted-foreground leading-relaxed mb-6">
+            جميع المعلومات التي تقدمها سرية، وتُستخدم فقط لأغراض تقييم الانضمام
+            للنادي، ولن تتم مشاركتها مع أي طرف ثالث.
+          </p>
 
           {/* Submit Button */}
           <div className="flex justify-center">
             <Button
               type="submit"
-              size="lg"
               disabled={
                 isSubmitting ||
                 !username ||
@@ -385,7 +396,6 @@ export function JoinForm({ userData }: JoinFormProps) {
                 skills.length === 0 ||
                 !about
               }
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 h-fit text-[1.0625rem] rounded-lg"
             >
               {isSubmitting ? "جاري الإرسال..." : "إرسال"}
             </Button>
@@ -393,5 +403,5 @@ export function JoinForm({ userData }: JoinFormProps) {
         </div>
       </form>
     </div>
-  )
+  );
 }

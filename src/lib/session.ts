@@ -5,6 +5,7 @@ export interface SessionData {
     id: string
     name: string
     email: string
+    login: string
     image?: string
   }
   accessToken: string

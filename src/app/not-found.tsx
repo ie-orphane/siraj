@@ -17,18 +17,13 @@ export default function Page() {
               خطأ 404
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl mb-10 text-foreground/70 leading-relaxed">
+            <p className="text-base md:text-lg mb-10 text-foreground/70 leading-relaxed">
               الصفحة التي تبحث عنها غير موجودة.
             </p>
 
             {/* Return Button */}
             <Link href="/">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-lg px-8 py-6 rounded-xl"
-              >
-                الرجوع إلى الرئيسية
-              </Button>
+              <Button>الرجوع إلى الرئيسية</Button>
             </Link>
           </div>
         </main>

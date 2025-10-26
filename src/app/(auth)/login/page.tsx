@@ -1,47 +1,32 @@
-'use client'
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/Header";
+import LoginButton from "@/components/login-button";
+import { checkFormCompletionStatus } from "@/lib/form-status";
+import { redirect } from "next/navigation";
 
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
-
-export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false)
-
-  const handle42Login = async () => {
-    setIsLoading(true)
-    try {
-      const authUrl = '/api/auth/42'
-      window.location.href = authUrl
-    } catch (error) {
-      console.error('Login error:', error)
-      toast.error('حدث خطأ أثناء تسجيل الدخول. يرجى المحاولة مرة أخرى.')
-      setIsLoading(false)
-    }
-  }
+export default async function Page() {
+  const formStatus = await checkFormCompletionStatus();
+  if (formStatus.isLoggedIn) redirect("/");
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background">
-      <div className="mx-auto max-w-md p-6 space-y-6 w-full">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">مرحباً بك في نادي سراج</h1>
-          <p className="text-muted-foreground mb-8">
-            سجل دخولك باستخدام حساب 42 للانضمام إلى النادي
-          </p>
-        </div>
+    <>
+      <Header />
+      <main className="min-h-[75vh] mt-20 flex items-center justify-center bg-background">
+        <div className="mx-auto max-w-xl p-6 flex flex-col gap-6 items-center w-full">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground font-kufam">
+              مرحباً بك في نادي سراج
+            </h1>
 
-        <Button
-          onClick={handle42Login}
-          disabled={isLoading}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-6 text-lg rounded-lg"
-          aria-busy={isLoading}
-        >
-          {isLoading ? 'جاري التحميل...' : 'تسجيل الدخول بحساب 42'}
-        </Button>
+            <p className="text-muted-foreground leading-relaxed text-base lg:text-lg mb-2">
+              سجل دخولك باستخدام حساب 42 للانضمام إلى النادي.
+            </p>
+          </div>
 
-        <div className="text-center text-sm text-muted-foreground">
-          <p>سيتم توجيهك إلى صفحة تسجيل الدخول في 42</p>
+          <LoginButton />
         </div>
-      </div>
-    </main>
-  )
+      </main>
+      <Footer />
+    </>
+  );
 }

@@ -28,7 +28,8 @@ export async function GET(request: NextRequest) {
     const sessionData = {
       user: {
         id: userInfo.id.toString(),
-        name: userInfo.displayname || userInfo.login,
+        login: userInfo.login,
+        name: userInfo.displayname,
         email: userInfo.email,
         image: userInfo.image?.link,
       },

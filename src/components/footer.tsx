@@ -8,10 +8,7 @@ export function Footer() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/">
-            {/* <div className="w-14 h-14 rounded-sm flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"> */}
-            {/* <img src="/logo.svg" alt="Logo" width={100} height={100} /> */}
             <Logo className="size-12" />
-            {/* </div> */}
           </Link>
         </div>
 
@@ -51,7 +48,7 @@ export function Footer() {
             </svg>
           </Link>
           <Link
-            href="https://discord.com"
+            href="https://discord.gg/teWJkbMdSD"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-primary transition-colors"

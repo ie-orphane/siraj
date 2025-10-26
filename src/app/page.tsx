@@ -1,6 +1,5 @@
 import { Header } from "@/components/Header"
 import { Hero } from "@/components/Hero"
-import { AboutSection } from "@/components/about-section"
 import { Footer } from "@/components/footer"
 import { BackgroundPattern } from "@/components/background-pattern"
 
@@ -11,7 +10,6 @@ export default function Home() {
       <div className="relative z-10">
         <Header />
         <Hero />
-        <AboutSection />
         <Footer />
       </div>
     </main>

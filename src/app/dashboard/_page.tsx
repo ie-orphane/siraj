@@ -1,15 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
 import { signOut } from '../actions'
 import { getSession } from '@/lib/session'
+import Link from 'next/link'
 
 export default async function Dashboard() {
   const session = await getSession()
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  // console.log(data)
+  // if (user) console.log("user:", user)
+  // console.log("session:", session)
+
   if (!session && !user) {
     // In a real app you'd redirect with headers in a middleware or use a route handler
-    return <a href="/login" className="underline">Go to login</a>
+    return <Link href="/login" className="underline">Go to login</Link>
   }
 
   // Fetch form submissions

@@ -1,23 +1,24 @@
-import { Footer } from "@/components/footer"
-import { BackgroundPattern } from "@/components/background-pattern"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { Header } from "@/components/Header"
-import { checkFormCompletionStatus } from "@/lib/form-status"
-import { redirect } from "next/navigation"
+import { Footer } from "@/components/footer";
+import { BackgroundPattern } from "@/components/background-pattern";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Header } from "@/components/Header";
+import { checkFormCompletionStatus } from "@/lib/form-status";
+import { redirect } from "next/navigation";
 
 export default async function SuccJoin() {
-  const formStatus = await checkFormCompletionStatus()
+  const formStatus = await checkFormCompletionStatus();
 
   // If user is not logged in, redirect to login
   if (!formStatus.isLoggedIn) {
-    redirect('/login')
+    redirect("/login");
   }
 
   // If user hasn't submitted the form yet, redirect to join page
   if (!formStatus.hasSubmittedForm) {
-    redirect('/join')
+    redirect("/join");
   }
+
   return (
     <div className="min-h-screen bg-background relative flex flex-col">
       <BackgroundPattern />
@@ -28,30 +29,17 @@ export default async function SuccJoin() {
         <main className="flex-1 flex items-center justify-center px-4 pt-24 pb-12">
           <div className="container mx-auto max-w-2xl text-center">
             {/* Success Message */}
-            <h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground"
-              style={{ fontFamily: "var(--font-amiri)" }}
-            >
-              !شكراً لتقديمك
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground font-kufam">
+              شكراً لتقديمك!
             </h1>
-            
-            <div className="space-y-2 mb-10">
-              <p className="text-base md:text-lg text-foreground/70 leading-relaxed">
-                .سنتواصل معك قريباً بعد مراجعة طلبك بإذن الله
-              </p>
-              <p className="text-base md:text-lg text-foreground/70 leading-relaxed">
-                .تابعنا على وسائل التواصل لمواكبة جديدنا
-              </p>
-            </div>
+
+            <p className="text-base mb-10 md:text-lg text-foreground/70 leading-relaxed">
+              سنتواصل معك قريباً بعد مراجعة طلبك بإذن الله.
+            </p>
 
             {/* Return Button */}
             <Link href="/">
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-10 py-5 text-base rounded-lg shadow-lg hover:shadow-xl transition-all"
-              >
-                الرجوع إلى الرئيسية
-              </Button>
+              <Button>الرجوع إلى الرئيسية</Button>
             </Link>
           </div>
         </main>
@@ -59,5 +47,5 @@ export default async function SuccJoin() {
         <Footer />
       </div>
     </div>
-  )
+  );
 }
