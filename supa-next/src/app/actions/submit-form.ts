@@ -7,7 +7,7 @@ import { getSession } from '@/lib/session'
 export interface JoinFormData {
   username: string
   fullname: string
-  email: string
+  email: string // This will come from userData, not form input
   tel: string
   team: string
   skills: string[]

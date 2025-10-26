@@ -36,16 +36,16 @@ export function JoinForm({ userData }: JoinFormProps) {
   const [notes, setNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Pre-fill form fields with user data
+  // Pre-fill form fields with user data (except email)
   useEffect(() => {
     if (userData) {
       setFullname(userData.name || "")
-      setEmail(userData.email || "")
       // Extract username from email (part before @)
       if (userData.email) {
         const usernameFromEmail = userData.email.split('@')[0]
         setUsername(usernameFromEmail)
       }
+      // Note: Email field is NOT auto-filled - user must enter it manually
     }
   }, [userData])
 
@@ -176,9 +176,6 @@ export function JoinForm({ userData }: JoinFormProps) {
             <div>
               <Label htmlFor="email" className="text-right block mb-2 text-sm">
                 البريد الإلكتروني
-                {userData?.email && (
-                  <span className="text-green-600 text-xs mr-2">(تم التعبئة تلقائياً)</span>
-                )}
               </Label>
               <Input 
                 id="email" 
