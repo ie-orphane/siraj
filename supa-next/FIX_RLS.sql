@@ -18,3 +18,4 @@ CREATE POLICY "Enable update for all users" ON public.form_submissions
 
 -- Also try disabling RLS temporarily to test
 -- ALTER TABLE public.form_submissions DISABLE ROW LEVEL SECURITY;
+

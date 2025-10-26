@@ -41,6 +41,7 @@ export function JoinForm() {
         username,
         fullname,
         email,
+        tel,
         team,
         skills,
         about,

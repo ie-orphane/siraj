@@ -8,6 +8,7 @@ export interface JoinFormData {
   username: string
   fullname: string
   email: string
+  tel: string
   team: string
   skills: string[]
   about: string
@@ -54,6 +55,7 @@ export async function submitJoinForm(formData: JoinFormData) {
         username: formData.username,
         fullname: formData.fullname,
         email: formData.email,
+        tel: formData.tel,
         team: formData.team,
         skills: formData.skills,
         about: formData.about,
@@ -95,6 +97,7 @@ export async function submitJoinForm(formData: JoinFormData) {
 اسم المستخدم: ${formData.username}
 الاسم الكامل: ${formData.fullname}
 البريد الإلكتروني: ${formData.email}
+رقم الهاتف: ${formData.tel}
 
 ═══════════════════════════════════
 معلومات الانضمام
@@ -161,6 +164,10 @@ ${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : 'لا ت�
         <div class="field">
           <span class="field-label">البريد الإلكتروني:</span>
           <span class="field-value"><a href="mailto:${formData.email}">${formData.email}</a></span>
+        </div>
+        <div class="field">
+          <span class="field-label">رقم الهاتف:</span>
+          <span class="field-value"><a href="tel:${formData.tel}">${formData.tel}</a></span>
         </div>
       </div>
 
