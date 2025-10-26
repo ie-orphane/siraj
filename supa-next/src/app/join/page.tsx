@@ -3,10 +3,12 @@ import { Footer } from "@/components/footer"
 import { JoinForm } from "@/components/join-form"
 import { BackgroundPattern } from "@/components/background-pattern"
 import { checkFormCompletionStatus } from "@/lib/form-status"
+import { getSession } from "@/lib/session"
 import { redirect } from "next/navigation"
 
 export default async function JoinPage() {
   const formStatus = await checkFormCompletionStatus()
+  const session = await getSession()
 
   // If user is not logged in, redirect to login
   if (!formStatus.isLoggedIn) {
@@ -24,7 +26,7 @@ export default async function JoinPage() {
       <div className="relative z-10">
         <Header />
         <main className="pt-24">
-          <JoinForm />
+          <JoinForm userData={session?.user} />
         </main>
         <Footer />
       </div>

@@ -7,12 +7,23 @@ import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TagInput } from "@/components/ui/tag-input"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { submitJoinForm } from "@/app/actions/submit-form"
 import { toast } from "sonner"
 
-export function JoinForm() {
+interface UserData {
+  id: string
+  name: string
+  email: string
+  image?: string
+}
+
+interface JoinFormProps {
+  userData?: UserData
+}
+
+export function JoinForm({ userData }: JoinFormProps) {
   const router = useRouter()
   const [username, setUsername] = useState("")
   const [fullname, setFullname] = useState("")
@@ -24,6 +35,19 @@ export function JoinForm() {
   const [timeAvailability, setTimeAvailability] = useState("more-5")
   const [notes, setNotes] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Pre-fill form fields with user data
+  useEffect(() => {
+    if (userData) {
+      setFullname(userData.name || "")
+      setEmail(userData.email || "")
+      // Extract username from email (part before @)
+      if (userData.email) {
+        const usernameFromEmail = userData.email.split('@')[0]
+        setUsername(usernameFromEmail)
+      }
+    }
+  }, [userData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -100,6 +124,9 @@ export function JoinForm() {
             <div>
               <Label htmlFor="username" className="text-right block mb-2 text-sm">
                 اسم المستخدم (المدرسي):
+                {userData?.email && (
+                  <span className="text-green-600 text-xs mr-2">(تم التعبئة تلقائياً)</span>
+                )}
               </Label>
               <Input 
                 id="username" 
@@ -114,6 +141,9 @@ export function JoinForm() {
             <div>
               <Label htmlFor="fullname" className="text-right block mb-2 text-sm">
                 الاسم الكامل
+                {userData?.name && (
+                  <span className="text-green-600 text-xs mr-2">(تم التعبئة تلقائياً)</span>
+                )}
               </Label>
               <Input 
                 id="fullname" 
@@ -146,6 +176,9 @@ export function JoinForm() {
             <div>
               <Label htmlFor="email" className="text-right block mb-2 text-sm">
                 البريد الإلكتروني
+                {userData?.email && (
+                  <span className="text-green-600 text-xs mr-2">(تم التعبئة تلقائياً)</span>
+                )}
               </Label>
               <Input 
                 id="email" 
