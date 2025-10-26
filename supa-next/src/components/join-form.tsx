@@ -17,6 +17,7 @@ export function JoinForm() {
   const [username, setUsername] = useState("")
   const [fullname, setFullname] = useState("")
   const [email, setEmail] = useState("")
+  const [tel, setTel] = useState("")
   const [team, setTeam] = useState("")
   const [skills, setSkills] = useState<string[]>([])
   const [about, setAbout] = useState("")
@@ -61,31 +62,33 @@ export function JoinForm() {
   }
 
   return (
-    <div className="container mx-auto max-w-3xl px-4 py-12">
+    <div className="container mx-auto max-w-3xl px-4 py-20">
       {/* Header */}
-      <div className="text-center mb-16">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground" style={{ fontFamily: "var(--font-amiri)" }}>
+      <div className="text-center mb-20">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground font-kufam">
           هل ترغب في أن تكون جزءًا
           <br />
           من نادي سراج؟
         </h1>
-        <p className="text-muted-foreground leading-relaxed text-base mb-2">
-          يسعدنا انضمامك! يرجى ملء النموذج التالي حتى نتعرف عليك أكثر
+        <p className="text-muted-foreground leading-relaxed text-base md:text-lg lg:text-xl mb-2">
+          يسعدنا اهتمامك! يرجى ملء النموذج التالي حتى نتعرف عليك أكثر
           <br />
-          ونتوصل إلى الفريق الأنسب لمهاراتك واهتماماتك.
+          ونوجهك إلى الفريق الأنسب لمهاراتك واهتماماتك.
         </p>
-        <p className="text-destructive text-sm">* حقائب إلزامية</p>
+        <p className="text-destructive text-sm">* خانات إلزامية</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-16">
         {/* Personal Information Section */}
         <div className="relative">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
             </div>
-            <h2 className="text-base font-semibold text-foreground whitespace-nowrap px-2">* المعلومات الشخصية</h2>
+            <h2 className="font-kufam font-medium text-secondary-on-container whitespace-nowrap px-2 after:content-['*'] after:text-base after:mr-1 after:text-destructive">
+              المعلومات الشخصية
+            </h2>
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
@@ -95,14 +98,14 @@ export function JoinForm() {
           <div className="space-y-6 bg-card/30 p-8 rounded-lg">
             <div>
               <Label htmlFor="username" className="text-right block mb-2 text-sm">
-                اسم المستخدم (الاسم/رمزي)
+                اسم المستخدم (المدرسي):
               </Label>
               <Input 
                 id="username" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="text-right bg-background" 
-                placeholder="الإيمايل"
+                className="text-right bg-background py-5" 
+                placeholder="aalaoui"
                 required
               />
             </div>
@@ -115,8 +118,26 @@ export function JoinForm() {
                 id="fullname" 
                 value={fullname}
                 onChange={(e) => setFullname(e.target.value)}
-                className="text-right bg-background" 
-                placeholder="الفاعل المجتمع"
+                className="text-right bg-background py-5" 
+                placeholder="أحمد العلوي"
+                required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="tel" className="text-right block mb-2 text-sm">
+                رقم الهاتف:
+              </Label>
+              <Input
+                id="tel"
+                type="tel"
+                maxLength={10}
+                value={tel}
+                onChange={(e) => {
+                  if (/^[0-9]*$/.test(e.target.value)) setTel(e.target.value);
+                }}
+                className="text-right bg-background py-5"
+                placeholder="06XX1XXX7X"
                 required
               />
             </div>
@@ -130,8 +151,8 @@ export function JoinForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="text-right bg-background" 
-                placeholder="[email protected]"
+                className="text-right bg-background py-5" 
+                placeholder="ahmed@alaoui.ma"
                 required
               />
             </div>
@@ -140,13 +161,13 @@ export function JoinForm() {
 
         {/* Team Selection Section */}
         <div className="relative">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
             </div>
-            <h2 className="text-base font-semibold text-foreground whitespace-nowrap px-2">
-              * الفريق الذي ترغب في الانضمام إليه
+            <h2 className="font-kufam font-medium text--secondary whitespace-nowrap px-2 after:content-['*'] after:text-base after:mr-1 after:text-destructive">
+              الفريق الذي ترغب في الانضمام إليه
             </h2>
             <div className="relative flex-1">
               <div className="h-px bg-border" />
@@ -156,17 +177,17 @@ export function JoinForm() {
 
           <div className="bg-card/30 p-8 rounded-lg">
             <Select value={team} onValueChange={setTeam} required>
-              <SelectTrigger className="w-full text-right bg-background h-12">
+              <SelectTrigger className="w-full text-right cursor-pointer flex-row-reverse bg-background py-5">
                 <SelectValue placeholder="اختر الفريق" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="design" className="text-right cursor-pointer">
+              <SelectContent dir="rtl">
+                <SelectItem value="design" className="cursor-pointer">
                   🎨 فريق التصميم
                 </SelectItem>
-                <SelectItem value="evenings" className="text-right cursor-pointer">
+                <SelectItem value="evenings" className="cursor-pointer">
                   🌙 فريق الأمسيات
                 </SelectItem>
-                <SelectItem value="activities" className="text-right cursor-pointer">
+                <SelectItem value="activities" className="cursor-pointer">
                   📅 فريق الأنشطة والفعاليات
                 </SelectItem>
               </SelectContent>
@@ -176,13 +197,13 @@ export function JoinForm() {
 
         {/* Skills Section */}
         <div className="relative">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
             </div>
-            <h2 className="text-base font-semibold text-foreground whitespace-nowrap px-2">
-              * المهارات أو الأدوات التي تتقنها
+            <h2 className="font-kufam font-medium text--secondary whitespace-nowrap px-2 after:content-['*'] after:text-base after:mr-1 after:text-destructive">
+              المهارات أو الأدوات التي تتقنها
             </h2>
             <div className="relative flex-1">
               <div className="h-px bg-border" />
@@ -195,26 +216,24 @@ export function JoinForm() {
               <TagInput
                 tags={skills}
                 onTagsChange={setSkills}
-                placeholder="أضف مهارة أو أداة..."
+                placeholder="برمجة بايثون، تصميم جرافيك،
+                مونتاج فيديو..."
                 maxTags={10}
                 maxLength={30}
               />
-              <p className="text-xs text-muted-foreground text-right mt-3">
-                اكتب مهاراتك بشكل واضح، مثلاً: برمجة بايثون، تصميم جرافيك، مونتاج فيديو
-              </p>
             </div>
           </div>
         </div>
 
         {/* About Section */}
         <div className="relative">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
             </div>
-            <h2 className="text-base font-semibold text-foreground whitespace-nowrap px-2">
-              * نبذة مختصرة عنك، شغفك، هواياتك؟
+            <h2 className="font-kufam font-medium text--secondary whitespace-nowrap px-2 after:content-['*'] after:text-base after:mr-1 after:text-destructive">
+              نبذة مختصرة عنك، شغفك، هواياتك؟
             </h2>
             <div className="relative flex-1">
               <div className="h-px bg-border" />
@@ -226,13 +245,16 @@ export function JoinForm() {
             <div className="relative">
               <Textarea
                 value={about}
+                maxLength={250}
                 onChange={(e) => setAbout(e.target.value)}
                 className="text-right min-h-[150px] resize-none bg-background"
                 placeholder="أحب التصميم والإبداع، أتطلع مهاراتي في تجربة المستخدم..."
               />
-              <div className="text-xs text-muted-foreground text-left mt-2">{about.length}/0</div>
-              <p className="text-xs text-muted-foreground text-right mt-3">
-                شاركنا قصة قصيرة عنك، ما الذي تشغف، وشغفك المستقبلية
+              <p className="flex justify-between items-center mt-3 text-xs text-muted-foreground">
+                <span>
+                  شاركنا نبذة قصيرة عنك، ما يثير شغفك، وطموحاتك المستقبلية.
+                </span>
+                <span>250/{about.length}</span>
               </p>
             </div>
           </div>
@@ -240,13 +262,13 @@ export function JoinForm() {
 
         {/* Time Availability Section */}
         <div className="relative">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
             </div>
-            <h2 className="text-base font-semibold text-foreground whitespace-nowrap px-2">
-              * الوقت الذي يمكنك تخصيصه للنادي أسبوعيًا؟
+            <h2 className="font-kufam font-medium text--secondary whitespace-nowrap px-2 after:content-['*'] after:text-base after:mr-1 after:text-destructive">
+              الوقت الذي يمكنك تخصيصه للنادي أسبوعيًا؟
             </h2>
             <div className="relative flex-1">
               <div className="h-px bg-border" />
@@ -255,7 +277,7 @@ export function JoinForm() {
           </div>
 
           <div className="bg-card/30 p-8 rounded-lg">
-            <RadioGroup value={timeAvailability} onValueChange={setTimeAvailability} className="space-y-4">
+            <RadioGroup value={timeAvailability} onValueChange={setTimeAvailability}>
               <div className="flex items-center justify-end gap-3 p-3 rounded-md hover:bg-accent/50 transition-colors cursor-pointer">
                 <Label htmlFor="less-3" className="cursor-pointer text-sm">
                   أقل من 3 ساعات
@@ -280,12 +302,12 @@ export function JoinForm() {
 
         {/* Additional Notes Section */}
         <div className="relative">
-          <div className="flex items-center gap-4 mb-10">
+          <div className="flex items-center gap-4">
             <div className="relative flex-1">
               <div className="h-px bg-border" />
               <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border-2 border-border bg-background" />
             </div>
-            <h2 className="text-base font-semibold text-foreground whitespace-nowrap px-2">
+            <h2 className="font-kufam font-medium text--secondary whitespace-nowrap px-2">
               ملاحظات إضافية أو اقتراحات :
             </h2>
             <div className="relative flex-1">
@@ -298,34 +320,45 @@ export function JoinForm() {
             <div className="relative">
               <Textarea
                 value={notes}
+                maxLength={250}
                 onChange={(e) => setNotes(e.target.value)}
                 className="text-right min-h-[150px] resize-none bg-background"
                 placeholder="شاركنا ملاحظاتك أو أي أفكار قد تساعدنا في تحسينك..."
               />
-              <div className="text-xs text-muted-foreground text-left mt-2">{notes.length}/0</div>
-              <p className="text-xs text-muted-foreground text-right mt-3">
-                اختياري: يمكنك إضافة أي معلومات إضافية تراها مهمة
+              <p className="flex justify-between items-center mt-3 text-xs text-muted-foreground">
+                <span>اختياري: يمكنك إضافة أي معلومات إضافية تراها مهمة</span>
+                <span>250/{notes.length}</span>
               </p>
             </div>
           </div>
         </div>
 
-        {/* Privacy Notice */}
-        <p className="text-xs text-muted-foreground text-center leading-relaxed px-4">
-          جميع المعلومات التي تقدمها سرية ولن تستخدم إلا لأغراض التواصل معك والتأكد من أنك المرشح الأنسب لفريق النادي.
-          لن يتم مشاركتها مع أي جهة خارجية.
-        </p>
+        <div>
+          {/* Privacy Notice */}
+            <p className="text-sm text-center text-muted-foreground leading-relaxed mb-6">
+              جميع المعلومات التي تقدمها سرية، وتُستخدم فقط لأغراض تقييم الانضمام
+              للنادي، ولن تتم مشاركتها مع أي طرف ثالث.
+            </p>
 
-        {/* Submit Button */}
-        <div className="flex justify-center pt-4">
-          <Button
-            type="submit"
-            size="lg"
-            disabled={isSubmitting}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-16 py-6 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "جاري الإرسال..." : "إرسال"}
-          </Button>
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              size="lg"
+              disabled={
+                isSubmitting ||
+                !username ||
+                !fullname ||
+                !email ||
+                !team ||
+                skills.length === 0 ||
+                !about
+              }
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 h-fit text-[1.0625rem] rounded-lg"
+            >
+              {isSubmitting ? "جاري الإرسال..." : "إرسال"}
+            </Button>
+          </div>
         </div>
       </form>
     </div>

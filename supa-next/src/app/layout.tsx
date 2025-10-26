@@ -1,8 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { GeistSans } from "geist/font/sans"
-import { GeistMono } from "geist/font/mono"
-import { Amiri } from "next/font/google"
+import { Amiri, Kufam, Tajawal } from "next/font/google"
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css"
 import { Suspense } from "react"
@@ -14,13 +12,26 @@ const amiri = Amiri({
   subsets: ["arabic"],
   variable: "--font-amiri",
   display: "swap",
-})
+});
+
+const kufam = Kufam({
+  weight: ["400", "600", "500", "700", "800", "900"],
+  subsets: ["arabic"],
+  variable: "--font-kufam",
+  display: "swap",
+});
+
+const tajawal = Tajawal({
+  weight: ["200", "300", "400", "500", "700"],
+  subsets: ["arabic"],
+  variable: "--font-tajawal",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "سراج - نادي طلابي",
+  title: "سراج",
   description: "نادي سراج هو نادي طلابي يهدف إلى تطوير الطلبة في مناح كثيرة",
-  generator: "v0.app",
-}
+};
 
 export default function RootLayout({
   children,
@@ -29,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} ${amiri.variable}`}>
+      <body className={`font-tajawal ${kufam.variable} ${amiri.variable} ${tajawal.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         <JoinAuthHandler />
         <ToastProvider />

@@ -89,10 +89,10 @@ export function TagInput({
       </div>
       <div className="flex justify-between items-center mt-2">
         <p className="text-xs text-muted-foreground">
-          {tags.length}/{maxTags} مهارات
+          اضغط Enter لإضافة مهارة
         </p>
         <p className="text-xs text-muted-foreground">
-          اضغط Enter أو اكتب الفاصلة لإضافة مهارة
+          {maxTags}/{tags.length} مهارات
         </p>
       </div>
     </div>
