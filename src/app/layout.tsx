@@ -1,11 +1,9 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Amiri, Kufam, Tajawal } from "next/font/google"
+import { Footer, Header, JoinAuthHandler, ToastProvider } from "@/components";
 import { Analytics } from "@vercel/analytics/react";
-import "./globals.css"
-import { Suspense } from "react"
-import { JoinAuthHandler } from "@/components/join-auth-handler"
-import { ToastProvider } from "@/components/providers/toast-provider"
+import type { Metadata } from "next";
+import { Amiri, Kufam, Tajawal } from "next/font/google";
+import type React from "react";
+import "./globals.css";
 
 const amiri = Amiri({
   weight: ["400", "700"],
@@ -36,16 +34,22 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={`font-tajawal ${kufam.variable} ${amiri.variable} ${tajawal.variable}`}>
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+      <body
+        className={`font-tajawal ${kufam.variable} ${amiri.variable} ${tajawal.variable}`}
+      >
+        <Header />
+        <main className="container mx-auto mt-[73px] flex min-h-[90vh] flex-col justify-center px-4 py-8">
+          {children}
+        </main>
+        <Footer />
         <JoinAuthHandler />
         <ToastProvider />
         <Analytics />
       </body>
     </html>
-  )
+  );
 }

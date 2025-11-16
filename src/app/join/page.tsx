@@ -1,35 +1,15 @@
-import { Header } from "@/components/Header"
-import { Footer } from "@/components/footer"
-import { JoinForm } from "@/components/join-form"
-import { BackgroundPattern } from "@/components/background-pattern"
-import { checkFormCompletionStatus } from "@/lib/form-status"
-import { getSession } from "@/lib/session"
-import { redirect } from "next/navigation"
+import { JoinForm } from "@/components/join-form";
+import { checkFormCompletionStatus } from "@/lib/form-status";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
-export default async function JoinPage() {
-  const formStatus = await checkFormCompletionStatus()
-  const session = await getSession()
+export default async function Page() {
+  const formStatus = await checkFormCompletionStatus();
+  const session = await getSession();
+  // // If user is not logged in, redirect to login
+  if (!formStatus.isLoggedIn) redirect("/login");
+  // // If user has already submitted the form, redirect to success page
+  if (formStatus.hasSubmittedForm) redirect("/succ-join");
 
-  // If user is not logged in, redirect to login
-  if (!formStatus.isLoggedIn) {
-    redirect('/login')
-  }
-
-  // If user has already submitted the form, redirect to success page
-  if (formStatus.hasSubmittedForm) {
-    redirect('/succ-join')
-  }
-
-  return (
-    <div className="min-h-screen bg-background relative">
-      <BackgroundPattern />
-      <div className="relative z-10">
-        <Header />
-        <main className="pt-24">
-          <JoinForm userData={session?.user} />
-        </main>
-        <Footer />
-      </div>
-    </div>
-  )
+  return <JoinForm userData={session?.user} />;
 }

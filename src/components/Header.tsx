@@ -1,33 +1,33 @@
-import Link from "next/link";
-import { Logo } from "./logo";
-import LoginButton from "./login-button";
-import Image from "next/image";
-import { getSession } from "@/lib/session";
 import { checkFormCompletionStatus } from "@/lib/form-status";
+import { getSession } from "@/lib/session";
+import Image from "next/image";
+import Link from "next/link";
+import LoginButton from "./login-button";
+import { Logo } from "./logo";
 
 export async function Header() {
   const formStatus = await checkFormCompletionStatus();
   const session = await getSession();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-      <div className="container mx-auto px-4 py-4 grid grid-cols-3 items-center">
+    <header className="fixed top-0 right-0 left-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
+      <div className="container mx-auto px-4 grid grid-cols-3 items-center py-4">
         <div className="flex items-center gap-4">
           <Link href="/">
-            <Logo className="size-10 " />
+            <Logo className="size-10" />
           </Link>
         </div>
 
-        <nav className="flex justify-center gap-6 md:gap-8 flex- text-sm md:text-base">
+        <nav className="flex- flex justify-center gap-6 text-sm md:gap-8 md:text-base">
           <Link
             href="/"
-            className="text-foreground hover:text-primary transition-colors"
+            className="text-foreground transition-colors hover:text-primary"
           >
             الرئيسية
           </Link>
           <Link
             href="/join"
-            className="text-foreground hover:text-primary transition-colors"
+            className="text-foreground transition-colors hover:text-primary"
           >
             انضم إلينا
           </Link>
@@ -42,7 +42,7 @@ export async function Header() {
               target="_blank"
             >
               <Image
-                src={session?.user.image || ""}
+                src={session?.user.image ?? ""}
                 alt="User Avatar"
                 width={40}
                 height={40}

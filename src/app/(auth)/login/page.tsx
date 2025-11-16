@@ -1,5 +1,3 @@
-import { Footer } from "@/components/footer";
-import { Header } from "@/components/Header";
 import LoginButton from "@/components/login-button";
 import { checkFormCompletionStatus } from "@/lib/form-status";
 import { redirect } from "next/navigation";
@@ -9,24 +7,17 @@ export default async function Page() {
   if (formStatus.isLoggedIn) redirect("/");
 
   return (
-    <>
-      <Header />
-      <main className="min-h-[75vh] mt-20 flex items-center justify-center bg-background">
-        <div className="mx-auto max-w-xl p-6 flex flex-col gap-6 items-center w-full">
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 text-foreground font-kufam">
-              مرحباً بك في نادي سراج
-            </h1>
+    <div className="mx-auto flex w-full max-w-xl flex-col items-center gap-6 p-6">
+      <div className="text-center">
+        <h1 className="mb-6 font-kufam text-3xl font-bold text-foreground md:text-4xl lg:text-5xl">
+          مرحباً بك في نادي سراج
+        </h1>
 
-            <p className="text-muted-foreground leading-relaxed text-base lg:text-lg mb-2">
-              سجل دخولك باستخدام حساب 42 للانضمام إلى النادي.
-            </p>
-          </div>
-
-          <LoginButton />
-        </div>
-      </main>
-      <Footer />
-    </>
+        <p className="mb-2 text-base leading-relaxed text-muted-foreground lg:text-lg">
+          سجل دخولك باستخدام حساب 42 للانضمام إلى النادي.
+        </p>
+      </div>
+      <LoginButton />
+    </div>
   );
 }
