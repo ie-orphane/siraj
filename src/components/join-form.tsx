@@ -26,27 +26,23 @@ interface UserData {
   image?: string;
 }
 
-interface JoinFormProps {
-  userData?: UserData;
-}
-
-export function JoinForm({ userData }: JoinFormProps) {
+export function JoinForm({ userData }: { userData?: UserData }) {
   const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [fullname, setFullname] = useState("");
+  const [login, setLogin] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
   const [team, setTeam] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [about, setAbout] = useState("");
-  const [timeAvailability, setTimeAvailability] = useState("");
+  const [availability, setavailability] = useState("");
   const [notes, setNotes] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!userData) return;
-    setUsername(userData.login ?? "");
-    setFullname(userData.name ?? "");
+    setLogin(userData.login ?? "");
+    setName(userData.name ?? "");
   }, [userData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,8 +50,8 @@ export function JoinForm({ userData }: JoinFormProps) {
 
     // Basic validation
     if (
-      !username ||
-      !fullname ||
+      !login ||
+      !name ||
       !email ||
       !team ||
       skills.length === 0 ||
@@ -69,14 +65,14 @@ export function JoinForm({ userData }: JoinFormProps) {
 
     try {
       const result = await submitJoinForm({
-        username,
-        fullname,
+        login,
+        name,
         email,
         tel,
         team,
         skills,
         about,
-        timeAvailability,
+        availability,
         notes,
       });
 
@@ -129,15 +125,12 @@ export function JoinForm({ userData }: JoinFormProps) {
 
           <div className="space-y-6 rounded-lg bg-card/30 p-8">
             <div>
-              <Label
-                htmlFor="username"
-                className="mb-2 block text-right text-sm"
-              >
+              <Label htmlFor="login" className="mb-2 block text-right text-sm">
                 اسم المدرسي:
               </Label>
               <Input
-                id="username"
-                value={username}
+                id="login"
+                value={login}
                 onChange={() => {}}
                 className="bg-background py-5 text-right"
                 placeholder="aalaoui"
@@ -148,14 +141,14 @@ export function JoinForm({ userData }: JoinFormProps) {
 
             <div>
               <Label
-                htmlFor="fullname"
+                htmlFor="name"
                 className="mb-2 block text-right text-sm"
               >
                 الاسم الكامل:
               </Label>
               <Input
-                id="fullname"
-                value={fullname}
+                id="name"
+                value={name}
                 onChange={() => {}}
                 className="bg-background py-5 text-right"
                 placeholder="أحمد العلوي"
@@ -316,10 +309,7 @@ export function JoinForm({ userData }: JoinFormProps) {
           </div>
 
           <div className="rounded-lg bg-card/30 p-8">
-            <RadioGroup
-              value={timeAvailability}
-              onValueChange={setTimeAvailability}
-            >
+            <RadioGroup value={availability} onValueChange={setavailability}>
               <div className="flex cursor-pointer items-center justify-end gap-3 rounded-md p-3 transition-colors hover:bg-accent/50">
                 <Label htmlFor="less-3" className="cursor-pointer text-sm">
                   أقل من 3 ساعات
@@ -388,8 +378,10 @@ export function JoinForm({ userData }: JoinFormProps) {
               type="submit"
               disabled={
                 isSubmitting ||
-                !username ||
-                !fullname ||
+                !login ||
+                !availability ||
+                !tel ||
+                !name ||
                 !email ||
                 !team ||
                 skills.length === 0 ||

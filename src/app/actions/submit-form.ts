@@ -1,89 +1,75 @@
-'use server'
+"use server";
 
-import nodemailer from 'nodemailer'
-import { createClient } from '@/lib/supabase/server'
-import { getSession } from '@/lib/session'
-
-export interface JoinFormData {
-  username: string
-  fullname: string
-  email: string // This will come from userData, not form input
-  tel: string
-  team: string
-  skills: string[]
-  about: string
-  timeAvailability: string
-  notes?: string
-}
+import { getSession } from "@/lib/session";
+import { createClient } from "@/lib/supabase/server";
+import nodemailer from "nodemailer";
 
 // Get team name in Arabic
 function getTeamName(teamValue: string): string {
   const teams: { [key: string]: string } = {
-    'design': '🎨 فريق التصميم',
-    'evenings': '🌙 فريق الأمسيات',
-    'activities': '📅 فريق الأنشطة والفعاليات'
-  }
-  return teams[teamValue] || teamValue
+    design: "🎨 فريق التصميم",
+    evenings: "🌙 فريق الأمسيات",
+    activities: "📅 فريق الأنشطة والفعاليات",
+  };
+  return teams[teamValue] || teamValue;
 }
 
 // Get time availability in Arabic
 function getTimeAvailability(value: string): string {
   const times: { [key: string]: string } = {
-    'less-3': 'أقل من 3 ساعات',
-    '3-5': 'من 3 إلى 5 ساعات',
-    'more-5': 'أكثر من 5 ساعات'
-  }
-  return times[value] || value
+    "less-3": "أقل من 3 ساعات",
+    "3-5": "من 3 إلى 5 ساعات",
+    "more-5": "أكثر من 5 ساعات",
+  };
+  return times[value] || value;
 }
 
 export async function submitJoinForm(formData: JoinFormData) {
   try {
     // Get the current user session
-    const session = await getSession()
-    
+    const session = await getSession();
+
     if (!session?.user?.id) {
-      throw new Error('User not authenticated')
+      throw new Error("User not authenticated");
     }
 
     // First, store the form data in the database
-    const supabase = await createClient()
-    
+    const supabase = await createClient();
+
     const { data: submission, error: dbError } = await supabase
-      .from('form_submissions')
+      .from("submissions")
       .insert({
-        user_id: session.user.id,
-        username: formData.username,
-        fullname: formData.fullname,
+        id: session.user.id,
+        avatar: session.user.image ?? null,
+        login: formData.login,
+        name: formData.name,
         email: formData.email,
         tel: formData.tel,
         team: formData.team,
         skills: formData.skills,
         about: formData.about,
-        time_availability: formData.timeAvailability,
-        notes: formData.notes || null,
-        email_sent: false,
-        form_completed: true,
-        form_completed_at: new Date().toISOString()
+        availability: formData.availability,
+        notes: formData.notes ?? null,
       })
       .select()
-      .single()
+      .single();
 
     if (dbError) {
-      console.error('Database error:', dbError)
-      throw new Error('Failed to store form submission in database')
+      console.error("Database error:", dbError);
+      throw new Error("Failed to store form submission in database");
     }
 
-    console.log('Form submission stored in database with ID:', submission.id)
+    console.log("Form submission stored in database with ID:", submission.id);
 
     // Now proceed with email sending
-    const adminEmail = process.env.ADMIN_EMAIL
-    const smtpHost = process.env.SMTP_HOST
-    const smtpPort = process.env.SMTP_PORT
-    const smtpUser = process.env.SMTP_USER
-    const smtpPass = process.env.SMTP_PASS
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
 
     if (!adminEmail) {
-      throw new Error('Admin email not configured')
+      throw new Error("Admin email not configured");
     }
 
     // Format the email content
@@ -94,8 +80,8 @@ export async function submitJoinForm(formData: JoinFormData) {
 المعلومات الشخصية
 ═══════════════════════════════════
 
-اسم المستخدم: ${formData.username}
-الاسم الكامل: ${formData.fullname}
+اسم المستخدم: ${formData.login}
+الاسم الكامل: ${formData.name}
 البريد الإلكتروني: ${formData.email}
 رقم الهاتف: ${formData.tel}
 
@@ -106,22 +92,22 @@ export async function submitJoinForm(formData: JoinFormData) {
 الفريق المختار: ${getTeamName(formData.team)}
 
 المهارات:
-${formData.skills.map(skill => `  • ${skill}`).join('\n')}
+${formData.skills.map((skill) => `  • ${skill}`).join("\n")}
 
 نبذة عن المتقدم:
 ${formData.about}
 
-الوقت المتاح أسبوعياً: ${getTimeAvailability(formData.timeAvailability)}
+الوقت المتاح أسبوعياً: ${getTimeAvailability(formData.availability)}
 
-${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : 'لا توجد ملاحظات إضافية'}
+${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : "لا توجد ملاحظات إضافية"}
 
 ═══════════════════════════════════
-تم الإرسال: ${new Date().toLocaleString('ar-SA', { 
-  timeZone: 'Asia/Riyadh',
-  dateStyle: 'full',
-  timeStyle: 'short'
-})}
-    `
+تم الإرسال: ${new Date().toLocaleString("ar-SA", {
+      timeZone: "Asia/Riyadh",
+      dateStyle: "full",
+      timeStyle: "short",
+    })}
+    `;
 
     // HTML version for better formatting
     const emailHTML = `
@@ -155,11 +141,11 @@ ${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : 'لا ت�
         <div class="section-title">المعلومات الشخصية</div>
         <div class="field">
           <span class="field-label">اسم المستخدم:</span>
-          <span class="field-value">${formData.username}</span>
+          <span class="field-value">${formData.login}</span>
         </div>
         <div class="field">
           <span class="field-label">الاسم الكامل:</span>
-          <span class="field-value">${formData.fullname}</span>
+          <span class="field-value">${formData.name}</span>
         </div>
         <div class="field">
           <span class="field-label">البريد الإلكتروني:</span>
@@ -180,45 +166,45 @@ ${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : 'لا ت�
         <div class="field">
           <span class="field-label">المهارات:</span>
           <ul class="skills-list">
-            ${formData.skills.map(skill => `<li>${skill}</li>`).join('')}
+            ${formData.skills.map((skill) => `<li>${skill}</li>`).join("")}
           </ul>
         </div>
         <div class="field">
           <span class="field-label">نبذة عن المتقدم:</span>
           <div style="background: white; padding: 10px; border-radius: 4px; margin-top: 5px;">
-            ${formData.about.replace(/\n/g, '<br>')}
+            ${formData.about.replace(/\n/g, "<br>")}
           </div>
         </div>
         <div class="field">
           <span class="field-label">الوقت المتاح أسبوعياً:</span>
-          <span class="field-value">${getTimeAvailability(formData.timeAvailability)}</span>
+          <span class="field-value">${getTimeAvailability(formData.availability)}</span>
         </div>
-        ${formData.notes ? `
+        ${
+          formData.notes
+            ? `
         <div class="field">
           <span class="field-label">ملاحظات إضافية:</span>
           <div style="background: white; padding: 10px; border-radius: 4px; margin-top: 5px;">
-            ${formData.notes.replace(/\n/g, '<br>')}
+            ${formData.notes.replace(/\n/g, "<br>")}
           </div>
         </div>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
 
       <div class="footer">
-        <p>تم الإرسال: ${new Date().toLocaleString('ar-SA', { 
-          timeZone: 'Asia/Riyadh',
-          dateStyle: 'full',
-          timeStyle: 'short'
+        <p>تم الإرسال: ${new Date().toLocaleString("ar-SA", {
+          timeZone: "Asia/Riyadh",
+          dateStyle: "full",
+          timeStyle: "short",
         })}</p>
       </div>
     </div>
   </div>
 </body>
 </html>
-    `
-
-    // Log to console
-    console.log('New Join Request:')
-    console.log(emailContent)
+    `;
 
     // Send email using SMTP if configured
     if (smtpHost && smtpPort && smtpUser && smtpPass) {
@@ -232,47 +218,40 @@ ${formData.notes ? `ملاحظات إضافية:\n${formData.notes}` : 'لا ت�
             user: smtpUser,
             pass: smtpPass,
           },
-        })
+        });
 
         // Send email
         await transporter.sendMail({
           from: `"نادي سراج" <${smtpUser}>`,
           to: adminEmail,
-          subject: `طلب انضمام جديد - ${formData.fullname}`,
+          subject: `طلب انضمام جديد - ${formData.name}`,
           text: emailContent,
           html: emailHTML,
-        })
+        });
 
         // Update database to mark email as sent
         const { error: updateError } = await supabase
-          .from('form_submissions')
+          .from("submissions")
           .update({
             email_sent: true,
-            email_sent_at: new Date().toISOString()
+            email_sent_at: new Date().toISOString(),
           })
-          .eq('id', submission.id)
+          .eq("id", submission.id);
 
         if (updateError) {
-          console.error('Failed to update email status:', updateError)
-        } else {
-          console.log('Email sent successfully and status updated in database!')
+          console.error("Failed to update email status:", updateError);
         }
       } catch (emailError) {
-        console.error('Email sending failed:', emailError)
-        // Continue anyway - don't fail the submission if email fails
-        // The database record will remain with email_sent: false
+        console.error("Email sending failed:", emailError);
       }
-    } else {
-      console.log('SMTP not configured. Email logged to console only.')
     }
 
-    return { success: true, message: 'تم إرسال طلبك بنجاح' }
+    return { success: true, message: "تم إرسال طلبك بنجاح" };
   } catch (error) {
-    console.error('Form submission error:', error)
-    return { 
-      success: false, 
-      message: 'حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.' 
-    }
+    console.error("Form submission error:", error);
+    return {
+      success: false,
+      message: "حدث خطأ أثناء إرسال الطلب. يرجى المحاولة مرة أخرى.",
+    };
   }
 }
-

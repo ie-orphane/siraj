@@ -1,28 +1,47 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { exchangeCodeForToken, getUserInfo } from '@/lib/oauth'
+import { exchangeCodeForToken, getUserInfo } from "@/lib/oauth";
+import { createClient } from "@/lib/supabase/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const code = searchParams.get('code')
-    const state = searchParams.get('state')
-    const error = searchParams.get('error')
+    const { searchParams } = new URL(request.url);
+    const code = searchParams.get("code");
+    const state = searchParams.get("state");
+    const error = searchParams.get("error");
 
-    if (error) {
-      console.error('OAuth error:', error)
-      return NextResponse.redirect(new URL('/login?error=oauth_error', request.url))
-    }
+    if (error)
+      return NextResponse.redirect(
+        new URL("/login?error=oauth_error", request.url),
+      );
+    if (!code)
+      return NextResponse.redirect(
+        new URL("/login?error=no_code", request.url),
+      );
 
-    if (!code) {
-      return NextResponse.redirect(new URL('/login?error=no_code', request.url))
-    }
+    const { access_token, refresh_token, expires_in } =
+      await exchangeCodeForToken(code);
+    const userInfo = await getUserInfo(access_token);
+    const supabase = await createClient();
 
-    // Exchange code for access token
-    const tokenData = await exchangeCodeForToken(code)
-    const { access_token } = tokenData
+    const { error: supabaseError } = await supabase
+      .from("ft_connections")
+      .upsert(
+        {
+          id: userInfo.id,
+          name: userInfo.displayname,
+          login: userInfo.login,
+          avatar: userInfo.image?.link ?? null,
+          access_token,
+          refresh_token,
+        },
+        { onConflict: "id" },
+      )
+      .select();
 
-    // Get user info
-    const userInfo = await getUserInfo(access_token)
+    if (supabaseError)
+      return NextResponse.redirect(
+        new URL("/login?error=connection_failed", request.url),
+      );
 
     // Create a simple session (you can store this in cookies or database)
     const sessionData = {
@@ -30,29 +49,27 @@ export async function GET(request: NextRequest) {
         id: userInfo.id.toString(),
         login: userInfo.login,
         name: userInfo.displayname,
-        email: userInfo.email,
-        image: userInfo.image?.link,
+        image: userInfo.image?.link ?? null,
       },
       accessToken: access_token,
-    }
+    };
 
     // Determine redirect URL from state parameter
-    const redirectUrl = state ? decodeURIComponent(state) : '/'
-    
-    // Set session cookie
-    const response = NextResponse.redirect(new URL(redirectUrl, request.url))
-    
-    // Store session in cookie (simple implementation)
-    response.cookies.set('42-session', JSON.stringify(sessionData), {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    })
+    const redirectUrl = state ? decodeURIComponent(state) : "/";
 
-    return response
+    // Set session cookie
+    const response = NextResponse.redirect(new URL(redirectUrl, request.url));
+    response.cookies.set("42-session", JSON.stringify(sessionData), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: expires_in,
+    });
+    return response;
   } catch (error) {
-    console.error('OAuth callback error:', error)
-    return NextResponse.redirect(new URL('/login?error=callback_error', request.url))
+    console.error("OAuth callback error:", error);
+    return NextResponse.redirect(
+      new URL("/login?error=callback_error", request.url),
+    );
   }
 }
