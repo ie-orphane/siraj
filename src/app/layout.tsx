@@ -1,4 +1,4 @@
-import { Footer, Header, JoinAuthHandler, ToastProvider } from "@/components";
+import { Footer, Header, ToastProvider } from "@/components";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Amiri, Kufam, Tajawal } from "next/font/google";
@@ -46,7 +46,6 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
-        <JoinAuthHandler />
         <ToastProvider />
         <Analytics />
       </body>

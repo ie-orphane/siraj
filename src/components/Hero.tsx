@@ -64,7 +64,7 @@ export function Hero() {
 
       {/* CTA Button */}
       <Link href="/join">
-        <Button size="lg" data-join-btn>
+        <Button size="lg">
           تقديم طلب الانضمام
         </Button>
       </Link>
