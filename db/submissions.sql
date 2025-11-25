@@ -14,3 +14,5 @@ CREATE TABLE IF NOT EXISTS public.submissions (
     email_sent_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE public.submissions ENABLE ROW LEVEL SECURITY;

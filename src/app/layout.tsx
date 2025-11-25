@@ -1,4 +1,4 @@
-import { Footer, Header, ToastProvider } from "@/components";
+import { ToastProvider } from "@/components";
 import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Amiri, Kufam, Tajawal } from "next/font/google";
@@ -41,11 +41,7 @@ export default function RootLayout({
       <body
         className={`font-tajawal ${kufam.variable} ${amiri.variable} ${tajawal.variable}`}
       >
-        <Header />
-        <main className="container mx-auto mt-[73px] flex min-h-[90vh] flex-col justify-center px-4 py-8">
-          {children}
-        </main>
-        <Footer />
+        {children}
         <ToastProvider />
         <Analytics />
       </body>

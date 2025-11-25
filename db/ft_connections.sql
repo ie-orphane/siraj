@@ -7,3 +7,5 @@ CREATE TABLE IF NOT EXISTS public.ft_connections (
   refresh_token TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE public.ft_connections ENABLE ROW LEVEL SECURITY;

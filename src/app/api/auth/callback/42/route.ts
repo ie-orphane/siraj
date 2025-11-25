@@ -67,7 +67,6 @@ export async function GET(request: NextRequest) {
     });
     return response;
   } catch (error) {
-    console.error("OAuth callback error:", error);
     return NextResponse.redirect(
       new URL("/login?error=callback_error", request.url),
     );
