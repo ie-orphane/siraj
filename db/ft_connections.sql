@@ -3,9 +3,8 @@ CREATE TABLE IF NOT EXISTS public.ft_connections (
   name TEXT,
   login TEXT NOT NULL,
   avatar TEXT,
-  access_token TEXT NOT NULL,
-  refresh_token TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  authorized_at TIMESTAMPTZ DEFAULT now(),
+  access_at TIMESTAMPTZ DEFAULT now(),
 );
 
 ALTER TABLE public.ft_connections ENABLE ROW LEVEL SECURITY;

@@ -1,15 +1,8 @@
-import { getSession } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await getSession();
-  if (!session) redirect("/login");
-
-  if (session.user.id !== process.env.ADMIN_ID) redirect("/");
-
   const supabase = await createClient();
   const { data } = await supabase
     .from("submissions")

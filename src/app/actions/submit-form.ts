@@ -59,8 +59,6 @@ export async function submitJoinForm(formData: JoinFormData) {
       throw new Error("Failed to store form submission in database");
     }
 
-    console.log("Form submission stored in database with ID:", submission.id);
-
     // Now proceed with email sending
     const adminEmail = process.env.ADMIN_EMAIL;
     const smtpHost = process.env.SMTP_HOST;

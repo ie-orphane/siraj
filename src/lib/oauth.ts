@@ -30,7 +30,6 @@ export async function exchangeCodeForToken(code: string): Promise<{
   created_at: number;
   secret_valid_until: number;
 }> {
-  console.log(FT_OAUTH_CONFIG)
   const response = await fetch(FT_OAUTH_CONFIG.tokenUrl, {
     method: "POST",
     headers: {
@@ -57,16 +56,14 @@ export async function getUserInfo(accessToken: string): Promise<{
   displayname: string;
   login: string;
   image?: { link: string };
-}> {
+}| null> {
   const response = await fetch(FT_OAUTH_CONFIG.userInfoUrl, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to get user info");
-  }
+  if (!response.ok) return null;
 
   return response.json();
 }

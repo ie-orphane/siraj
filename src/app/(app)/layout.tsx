@@ -6,7 +6,6 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log("Layout rendered");
   return (
     <>
       <Header />

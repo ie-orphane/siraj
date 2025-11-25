@@ -1,5 +1,3 @@
-import { getSession } from "@/lib/session";
-import { redirect } from "next/navigation";
 import React from "react";
 
 function formatKey(d: Date) {
@@ -165,11 +163,6 @@ function CalendarMonthView({
 }
 
 export default async function Page() {
-  const session = await getSession();
-  if (!session) redirect("/login");
-
-  if (session.user.id !== process.env.ADMIN_ID) redirect("/");
-
   const min = new Date();
   const max = new Date(2026, 1, 18);
 
@@ -189,7 +182,7 @@ export default async function Page() {
     );
 
     const wednesdays: Date[] = [];
-    const WED = 2; // Sunday=0, Monday=1, ..., Wednesday=3
+    const WED = 3; // Sunday=0, Monday=1, ..., Wednesday=3
 
     const offset = (WED - startUtc.getUTCDay() + 7) % 7;
     const firstWednesday = new Date(
@@ -226,7 +219,7 @@ export default async function Page() {
         <div key={i} className="bg-red100">
           <CalendarMonthView
             monthOffset={i}
-            minDate={min}
+            minDate={min} 
             maxDate={max}
             highlightedDates={highlightedDates}
           />
